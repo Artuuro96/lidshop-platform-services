@@ -1,5 +1,4 @@
-from typing import Optional, Annotated
-
+from typing import Annotated
 from bson import ObjectId
 from pydantic import BaseModel, Field
 from src.utils.util import ObjectIdPydanticAnnotation

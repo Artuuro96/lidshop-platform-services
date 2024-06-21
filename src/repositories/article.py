@@ -1,9 +1,8 @@
-from src.models.article import Article, ArticleDetail
+from src.models.article import ArticleDetail
 from fastapi import HTTPException
 from bson import ObjectId
 from fastapi.encoders import jsonable_encoder
 from configuration import db
-from src.models.brand import Brand
 from src.schemas.article import ArticleSchema
 from src.repositories.brand import get_brand_by_id
 
@@ -50,6 +49,18 @@ async def get_article_by_id(article_id: str) -> ArticleDetail:
 async def get_all_articles():
     collection = db["articles"]
     articles = collection.find({})
+    return articles
+
+
+async def get_article_by_keyword(keyword: str):
+    print("==============>>>>", keyword)
+    collection = db["articles"]
+    articles = collection.find({
+        "name": {
+            "$regex": keyword,
+            "$options": "i"
+        }
+    })
     return articles
 
 

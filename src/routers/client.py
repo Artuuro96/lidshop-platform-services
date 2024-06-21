@@ -9,12 +9,13 @@ from src.repositories.client import (
     update_client_by_id,
     delete_client_by_id
 )
+from src.schemas.client import ClientSchema
 
 router = APIRouter()
 
 
 @router.post("", response_model=Client, status_code=status.HTTP_201_CREATED)
-async def create(client: Client):
+async def create(client: ClientSchema):
     new_client = await create_client(client)
     return new_client
 
@@ -34,10 +35,11 @@ async def get_all():
 @router.put("/{client_id}", response_model={})
 async def update_by_id(client_id: str, client):
     client_updated = await update_client_by_id(client_id, client)
-    print(client_updated)
+    print("===========>>>>>>", client_updated)
     return {}
 
 
+@router.delete("/", response_model={}, status_code=status.HTTP_204_NO_CONTENT)
 async def delete_by_id(client_id: str):
     await delete_client_by_id(client_id)
     return {}

@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from pymongo.errors import DuplicateKeyError, PyMongoError
-from src.routers import article, client, brand
+from src.auth.auth import auth_request
+from src.routers import article, client, brand, sale
 
 app = FastAPI(
     title='Lid Shop Rest API',
@@ -42,7 +43,7 @@ async def global_exception_handler(request: Request, exc: HTTPException):
         content={"message": exc.detail, "statusCode": exc.status_code}
     )
 
-
-app.include_router(article.router, prefix="/articles", tags=["Articles"])
-app.include_router(client.router, prefix="/clients", tags=["Clients"])
-app.include_router(brand.router, prefix="/brands", tags=["Brands"])
+app.include_router(article.router, prefix="/articles", tags=["Articles"], dependencies=[Depends(auth_request)])
+app.include_router(client.router, prefix="/clients", tags=["Clients"], dependencies=[Depends(auth_request)])
+app.include_router(brand.router, prefix="/brands", tags=["Brands"], dependencies=[Depends(auth_request)])
+app.include_router(sale.router, prefix="/sales", tags=["Sales"], dependencies=[Depends(auth_request)])

@@ -6,6 +6,7 @@ from src.repositories.article import (
     create_article,
     get_all_articles,
     get_article_by_id,
+    get_article_by_keyword,
     update_article,
     delete_article
 )
@@ -35,14 +36,20 @@ async def create_many(file: UploadFile):
 @router.get("", response_model=List[Article])
 async def get_all():
     articles = await get_all_articles()
-    if articles:
-        return articles
+    return articles
 
 
 @router.get("/{article_id}", response_model=ArticleDetail)
 async def get_by_id(article_id: str) -> ArticleDetail:
     article = await get_article_by_id(article_id)
     return article
+
+
+@router.get("/", response_model=List[Article])
+async def get_by_keyword(keyword: str):
+    print("=========>", keyword)
+    articles = await get_article_by_keyword(keyword)
+    return articles
 
 
 @router.put("/{article_id}", response_model=Article)

@@ -1,12 +1,14 @@
+from typing import Optional
+
 from configuration import db
 from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException
 from bson import ObjectId
-
 from src.models.client import Client
+from src.schemas.client import ClientSchema
 
 
-async def create_client(client: Client):
+async def create_client(client: ClientSchema) -> Client:
     collection = db["clients"]
     client_dict = jsonable_encoder(client)
     new_client = collection.insert_one(client_dict)
@@ -30,7 +32,7 @@ async def get_all_clients():
     return clients
 
 
-async def update_client_by_id(client_id: str, client: Client):
+async def update_client_by_id(client_id: str, client: Optional[ClientSchema]):
     collection = db["clients"]
     client_dict = jsonable_encoder(client)
     result = collection.update_one({
