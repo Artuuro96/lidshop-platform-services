@@ -20,7 +20,7 @@ async def create(sale: SaleSchema):
     for article in sale.articles:
         article_found = await get_article_by_id(article.id)
         if not article_found:
-            raise HTTPException(status.HTTP_400_BAD_REQUEST, f"Article {article_id} does not exist")
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, f"Article {article.id} does not exist")
 
     new_sale = await create_sale(sale)
     return new_sale
