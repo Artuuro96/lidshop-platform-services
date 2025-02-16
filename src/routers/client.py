@@ -32,11 +32,10 @@ async def get_all():
     return clients
 
 
-@router.put("/{client_id}", response_model={})
+@router.put("/{client_id}", response_model=Client)
 async def update_by_id(client_id: str, client):
     client_updated = await update_client_by_id(client_id, client)
-    print("===========>>>>>>", client_updated)
-    return {}
+    return client_updated
 
 
 @router.delete("/", response_model={}, status_code=status.HTTP_204_NO_CONTENT)

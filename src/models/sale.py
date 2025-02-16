@@ -5,9 +5,9 @@ from pydantic import BaseModel, Field
 from src.utils.util import ObjectIdPydanticAnnotation
 
 
-class Sale(BaseModel, Audit):
+class Sale(BaseModel):
     id: Annotated[ObjectId, ObjectIdPydanticAnnotation] = Field(alias="_id")
-    article_ids: List[str] = Field(alias="articleIds")
+    articles: List[str] = Field(alias="articleIds")
     total: float
     client_id: str
     vendor_id: str

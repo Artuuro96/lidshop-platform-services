@@ -1,4 +1,4 @@
-from typing import Annotated, Literal, Optional
+from typing import Annotated, Literal, Optional, List
 from pydantic import BaseModel, Field
 from bson import ObjectId
 
@@ -32,3 +32,7 @@ class ArticleDetail(BaseModel):
     profit: float
     status: Literal["AVAILABLE", "RESERVED", "SOLD_OUT"]
     brand: Brand
+
+
+class ArticleResponseDeleted(BaseModel):
+    deleted_ids: List[str] = Field(alias="deletedIds")

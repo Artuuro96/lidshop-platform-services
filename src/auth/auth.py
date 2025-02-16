@@ -2,22 +2,25 @@ import requests
 from fastapi import HTTPException, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from decouple import config
-import jwt
 
 security = HTTPBearer()
 
 
 def validate_token(token: str):
-    auth_service_url = config("ACMA_URL")
-    response = requests.post(auth_service_url + "/auth/verify", json={}, headers={
-        "Authorization": "Bearer " + token
+    data = {
+        "client_id": config("AUTH_CLIENT_ID"),
+        "client_secret": config("AUTH_CLIENT_SECRET"),
+        "token": token,
+    }
+    auth_service_url = config("AUTH_BASE_URL")
+    response = requests.post(f"{auth_service_url}/token/introspect", data, headers={
+        "Content-Type": "application/x-www-form-urlencoded"
     })
-    user = jwt.decode(token, options={"verify_signature": False})
 
-    if response.status_code != 201:
+    if response.status_code != 200 or not response.json()["active"]:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    return user
+    return response.json()
 
 
 def auth_request(credentials: HTTPAuthorizationCredentials = Security(security)):

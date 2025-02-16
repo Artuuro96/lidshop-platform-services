@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from pymongo.errors import DuplicateKeyError, PyMongoError
 from src.auth.auth import auth_request
 from src.routers import article, client, brand, sale
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title='Lid Shop Rest API',
@@ -42,6 +43,15 @@ async def global_exception_handler(request: Request, exc: HTTPException):
         status_code=exc.status_code,
         content={"message": exc.detail, "statusCode": exc.status_code}
     )
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "DELETE", "PUT"],
+    allow_headers=["*"],
+)
 
 app.include_router(article.router, prefix="/articles", tags=["Articles"], dependencies=[Depends(auth_request)])
 app.include_router(client.router, prefix="/clients", tags=["Clients"], dependencies=[Depends(auth_request)])

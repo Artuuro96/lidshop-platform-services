@@ -1,3 +1,6 @@
+import time
+from typing import List
+
 from src.models.article import ArticleDetail
 from fastapi import HTTPException
 from bson import ObjectId
@@ -53,7 +56,6 @@ async def get_all_articles():
 
 
 async def get_article_by_keyword(keyword: str):
-    print("==============>>>>", keyword)
     collection = db["articles"]
     articles = collection.find({
         "name": {
@@ -76,9 +78,13 @@ async def update_article(article_id: str, article: ArticleSchema):
     return result
 
 
-async def delete_article(article_id: str):
+async def delete_article(article_ids: List[str]):
     collection = db["articles"]
-    result = collection.delete_one(
-        {'_id': ObjectId(article_id)}
-    )
+    result = []
+    for article_id in article_ids:
+        delete_result = collection.delete_one(
+            {'_id': ObjectId(article_id)}
+        )
+        if delete_result.deleted_count == 1:
+            result.append(article_id)
     return result

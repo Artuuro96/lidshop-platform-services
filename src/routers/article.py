@@ -1,6 +1,7 @@
 from typing import List
-from fastapi import APIRouter, HTTPException, status, UploadFile
-from src.models.article import Article, ArticleDetail
+
+from fastapi import APIRouter, HTTPException, status, UploadFile, Query
+from src.models.article import Article, ArticleDetail, ArticleResponseDeleted
 from src.schemas.article import ArticleSchema
 from src.repositories.article import (
     create_article,
@@ -47,7 +48,6 @@ async def get_by_id(article_id: str) -> ArticleDetail:
 
 @router.get("/", response_model=List[Article])
 async def get_by_keyword(keyword: str):
-    print("=========>", keyword)
     articles = await get_article_by_keyword(keyword)
     return articles
 
@@ -59,7 +59,9 @@ async def update_by_id(article_id: str, article: ArticleSchema):
     return {}
 
 
-@router.delete("/{article_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_by_id(article_id: str):
-    await delete_article(article_id)
-    return None
+@router.delete("/", status_code=status.HTTP_200_OK, response_model=ArticleResponseDeleted)
+async def delete_by_ids(article_ids: List[str] = Query(...)):
+    deleted_ids = await delete_article(article_ids)
+    return {
+        "deletedIds": deleted_ids
+    }
