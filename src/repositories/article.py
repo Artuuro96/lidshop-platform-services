@@ -1,5 +1,5 @@
 import time
-from typing import List
+from typing import List, Optional
 
 from src.models.article import ArticleDetail
 from fastapi import HTTPException
@@ -8,6 +8,7 @@ from fastapi.encoders import jsonable_encoder
 from configuration import db
 from src.schemas.article import ArticleSchema
 from src.repositories.brand import get_brand_by_id
+from src.services.spaces import DOSpaces
 
 
 async def create_article(article: ArticleSchema):
@@ -21,7 +22,8 @@ async def create_article(article: ArticleSchema):
 async def get_article_by_id(article_id: str) -> ArticleDetail:
     collection = db["articles"]
     article_dict = collection.find_one({
-        "_id": ObjectId(article_id)
+        "_id": ObjectId(article_id),
+        "status": "AVAILABLE"
     })
 
     if not article_dict:
@@ -61,16 +63,20 @@ async def get_article_by_keyword(keyword: str):
         "name": {
             "$regex": keyword,
             "$options": "i"
-        }
+        },
+        "status": "AVAILABLE"
     })
     return articles
 
 
-async def update_article(article_id: str, article: ArticleSchema):
+async def update_article(article_id: str, article):
     collection = db["articles"]
     article_dict = jsonable_encoder(article)
     result = collection.update_one(
-        {'_id': ObjectId(article_id)},
+        {
+            '_id': ObjectId(article_id),
+            "status": "AVAILABLE"
+        },
         {'$set': article_dict}
     )
     if result.modified_count != 1:

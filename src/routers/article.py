@@ -1,6 +1,6 @@
-from typing import List
+from typing import List, Optional, Literal
 
-from fastapi import APIRouter, HTTPException, status, UploadFile, Query
+from fastapi import APIRouter, HTTPException, status, UploadFile, Query, Form, File
 from src.models.article import Article, ArticleDetail, ArticleResponseDeleted
 from src.schemas.article import ArticleSchema
 from src.repositories.article import (
@@ -14,6 +14,7 @@ from src.repositories.article import (
 from src.repositories.brand import (
     get_brand_by_id
 )
+from src.services.spaces import DOSpaces
 
 router = APIRouter()
 
@@ -32,6 +33,15 @@ async def create(article: ArticleSchema):
 @router.post("/bulk")
 async def create_many(file: UploadFile):
     return {"filename": file.filename}
+
+
+@router.post("/image", status_code=status.HTTP_201_CREATED)
+async def post_image(file: UploadFile = File(...)):
+    dos_space_service = DOSpaces()
+    await dos_space_service.put_object(file.file, "lid-shop", file.filename, file.content_type)
+    return {
+        "url": f"https://lid-shop.nyc3.digitaloceanspaces.com/images/{file.filename}"
+    }
 
 
 @router.get("", response_model=List[Article])

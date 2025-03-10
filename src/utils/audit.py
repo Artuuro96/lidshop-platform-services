@@ -1,14 +1,14 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 
-class Audit:
+class Audit(BaseModel):
     created_at: datetime = Field(alias="createdAt")
     created_by: str = Field(alias="createdBy")
-    updated_at: datetime = Field(alias="updatedAt")
-    updated_by: str = Field(alias="updatedBy")
-    deleted_at: Optional[datetime] = Field(alias="deletedAt", default=datetime.now())
+    updated_at: datetime = Field(alias="updatedAt", default=None)
+    updated_by: str = Field(alias="updatedBy", default=None)
+    deleted_at: Optional[datetime] = Field(alias="deletedAt", default=None)
     deleted_by: Optional[str] = Field(alias="deletedBy", default=None)
     deleted: bool = Field(default=False)

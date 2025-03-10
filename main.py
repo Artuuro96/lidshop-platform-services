@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from pymongo.errors import DuplicateKeyError, PyMongoError
 from src.auth.auth import auth_request
-from src.routers import article, client, brand, sale
+from src.routers import article, client, brand, sale, payment
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -57,3 +57,4 @@ app.include_router(article.router, prefix="/articles", tags=["Articles"], depend
 app.include_router(client.router, prefix="/clients", tags=["Clients"], dependencies=[Depends(auth_request)])
 app.include_router(brand.router, prefix="/brands", tags=["Brands"], dependencies=[Depends(auth_request)])
 app.include_router(sale.router, prefix="/sales", tags=["Sales"], dependencies=[Depends(auth_request)])
+app.include_router(payment.router, prefix="/payments", tags=["Payments"], dependencies=[Depends(auth_request)])

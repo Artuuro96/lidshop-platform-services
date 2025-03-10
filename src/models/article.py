@@ -13,6 +13,7 @@ class Article(BaseModel):
     tax: float
     ticket_price: float = Field(alias="ticketPrice")
     parcel: float
+    url: str
     lid_shop_price: float = Field(alias="lidShopPrice")
     other_costs: float = Field(alias="otherCosts")
     profit: float
